@@ -15,11 +15,12 @@ const PUSHOVER_API_TOKEN = "abughxjjtuofgt89bz21mibut67j5t"
 const PUSHOVER_API_URL = "https://api.pushover.net/1/messages.json"
 
 type PushoverConfig struct {
-	UserKey  string  `mapstructure:"user_key" validate:"required"`
-	Device   *string `mapstructure:"device" validate:"omitempty"`
-	Priority *string `mapstructure:"priority" validate:"omitempty,oneof=emergency high normal low lowest"`
-	Retry    *int    `mapstructure:"retry" validate:"omitempty,min=30"`
-	Expire   *int    `mapstructure:"expire" validate:"omitempty,min=0,max=10800"`
+	UserKey  		string  `mapstructure:"user_key" validate:"required"`
+	ApplicationKey  string  `mapstructure:"application_key"`
+	Device   		*string `mapstructure:"device" validate:"omitempty"`
+	Priority 		*string `mapstructure:"priority" validate:"omitempty,oneof=emergency high normal low lowest"`
+	Retry    		*int    `mapstructure:"retry" validate:"omitempty,min=30"`
+	Expire   		*int    `mapstructure:"expire" validate:"omitempty,min=0,max=10800"`
 }
 
 type Pushover struct {
@@ -44,6 +45,9 @@ func (*Pushover) Send(configIface interface{}, title string, message string, sta
 		"user":    config.UserKey,
 		"title":   title,
 		"message": message,
+	}
+	if config.ApplicationKey != "" {
+		body["token"] = *&config.ApplicationKey
 	}
 	if config.Device != nil {
 		body["device"] = *config.Device
